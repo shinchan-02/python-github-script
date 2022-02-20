@@ -4,7 +4,7 @@ import re
 import sys
 
 
-def add_user_to_organization(members, permission, error_count, comment):
+def add_user_to_organization(members, permission, comment):
     try:
         for member in members:
             if member:
@@ -15,26 +15,20 @@ def add_user_to_organization(members, permission, error_count, comment):
                     print(user_to_org.add_to_members(user))
                     if user_to_org is not None:
                         comment.append("Invitation has been sent to the user --> {}".format(member))
-                        # jira.add_comment(issueKey, body="Invitation has been sent to the user --> {}".format(member))
                         print("Invitation has been sent to the user.")
                     else:
                         comment.append("Some error Occured --> {},{}".format(user_to_org, member))
-                        # jira.add_comment(issueKey, body="Some error Occured --> {},{}".format(user_to_org, member))
-                        error_count += 1
                         print(user_to_org)
                 except Exception as error:
                     comment.append("Some error Occured --> {},{}".format(user_to_org, member))
-                    # jira.add_comment(issueKey, body="Exception --> {}, {}".format(error, member))
-                    error_count += 1
                     print(error)
-        return error_count, comment
+        return comment
     except Exception as error:
-        jira.add_comment(issueKey, body="Exception --> {}".format(error))
-        error_count += 1
+        comment.append("Exception --> {}".format(error))
         print(error)
+        return comment
         
-        
-def add_user_to_team(members, teams_dic, error_count, comment):
+def add_user_to_team(members, teams_dic, comment):
     try:
         for team in teams_dic:
             if team:
@@ -208,18 +202,12 @@ if __name__ == "__main__":
     access_token = sys.argv[1]
     git_hub = Github(USERNAME, access_token)
     
-    count = 0
-    exit_count = 0
-    issue_ = []
-    
     if sys.argv[1] == '--Add-user-to-org':
         username = sys.argv[2]
-
         members = [str(i) for i in username.strip().split(",")]
+        permission = sys.argv[3]
 
-        print("members = ", members)
-
-        add_user_to_organization(members, permission, error_count, comment)
+        add_user_to_organization(members, permission)
 
     if sys.argv[1] == '--Add-user-to-team':
         username = sys.argv[2]
@@ -236,6 +224,7 @@ if __name__ == "__main__":
     if sys.argv[1] == '--Add-team-to-repo':
         teamname = sys.argv[2]
         reponame = sys.argv[3]
+        permission = sys.argv[4]
 
         teams_dic = [str(i) for i in teamname.strip().split(",")]
         repos = [str(i) for i in reponame.strip().split(",")]
@@ -243,7 +232,7 @@ if __name__ == "__main__":
         print("teams_dic = ", teams_dic)
         print("repos = ", repos)
 
-        add_team_in_repo(teams_dic, repos)
+        add_team_to_repo(teams_dic, repos, permission)
 
     if sys.argv[1] == '--Add-user-to-repo':
         username = sys.argv[2]
@@ -256,7 +245,7 @@ if __name__ == "__main__":
         print("members = ", members)
         print("repos = ", repos)
 
-        add_user_in_repo(members, repos, permission)
+        def add_user_to_repo(members, repos, permission)
 
     if sys.argv[1] == '--User-to-Branch':
         username = sys.argv[2]
@@ -270,5 +259,15 @@ if __name__ == "__main__":
         print("members = ", members)
         print("repos = ", repos)
         print("branches = ", branches)
-
+        
         user_to_branch_protection_rule(members, repos, branches)
+        
+        
+    if sys.argv[1] == '--create-repo':
+        repository = sys.argv[2]
+        description = sys.argv[3]
+        
+        create_repo(repository, description)
+        
+        
+        
